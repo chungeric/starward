@@ -28,13 +28,13 @@ export function updateForm(value, id, valid, formId) {
   return ({ type: UPDATE_FORM, payload: {value, id, valid}, key: formId });
 }
 
-export function submitForm(id, fields) {
+export function submitForm(id, fields, formTitle) {
   return (dispatch) => {
     dispatch({ type: SUBMIT_FORM, key: id });
     const gravityFormPostUrl = `${ROOT_API}/gravityforms?id=${id}`;
     axios.post(gravityFormPostUrl, fields)
     .then(({data}) => {
-      if (data.success) dispatch({type: SUBMIT_FORM_SUCCESS, key: id });
+      if (data.success) dispatch({type: SUBMIT_FORM_SUCCESS, key: id, formTitle });
     })
     .catch(() => dispatch({type: SUBMIT_FORM_FAILURE, key: id}));
   };

@@ -12,8 +12,15 @@ import { gtmMiddleware } from './gtmMiddleware';
  * while using browserHistory for client-side rendering.
  */
 export default function configureStore(initialState, history) {
+  const { starward } = initialState || {};
+  const { settings } = starward || {};
+  const { trackingId } = settings || {};
   // Installs hooks that always keep react-router and redux store in sync
-  const middleware = [thunk, routerMiddleware(history), gtmMiddleware];
+  const middleware = [thunk, routerMiddleware(history)];
+  // Add Google Tag Manager event tracking middleware if trackingId exists
+  if (trackingId) {
+    middleware.push(gtmMiddleware);
+  }
   let store;
 
   if (isClient && isDebug) {

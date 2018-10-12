@@ -37,7 +37,9 @@ class GravityForm extends Component {
     const { formId, gravityforms } = this.props;
     if (gravityforms[formId].isValid) {
       this.setState({submitFailed: false});
-      this.props.submitForm(formId, gravityforms[formId].formValues);
+      const { formValues, activeForm } = gravityforms[formId] || {};
+      const { title } = activeForm || {};
+      this.props.submitForm(formId, formValues, title);
     } else this.setState({submitFailed: true});
   }
   render() {

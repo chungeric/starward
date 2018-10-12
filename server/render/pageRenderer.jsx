@@ -3,6 +3,9 @@ import serialize from 'serialize-javascript';
 import staticAssets from './static-assets/index';
 
 const buildPage = ({ componentHTML, initialState, headAssets }) => {
+  const { starward } = initialState || {};
+  const { settings } = starward || {};
+  const { trackingId } = settings || {};
   return `
 <!doctype html>
 <html>
@@ -11,9 +14,12 @@ const buildPage = ({ componentHTML, initialState, headAssets }) => {
     ${headAssets.meta.toString()}
     ${headAssets.link.toString()}
     ${staticAssets.createStylesheets()}
-    ${staticAssets.createTrackingScript()}
+    ${staticAssets.createTrackingScript(trackingId)}
   </head>
   <body>
+    ${trackingId ?
+    `<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=${trackingId}"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>` : ''}
     <div id="app">${componentHTML}</div>
     <script>window.__INITIAL_STATE__ = ${serialize(initialState)}</script>
     ${staticAssets.createAppScript()}

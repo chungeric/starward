@@ -1,56 +1,43 @@
-import { GTM_TRACK_PAGE_CHANGE } from '../actions/types';
-import { isProduction } from '../config/app';
+import { createMiddleware } from 'redux-beacon';
+import GoogleTagManager from '@redux-beacon/google-tag-manager';
 
-const logger = (...args) => {
-  if (!isProduction) {
-    console.log(...args);
-  }
+/* Redux events */
+import { LOCATION_CHANGE } from 'react-router-redux';
+import { SUBMIT_FORM_SUCCESS } from '../actions/types';
+
+/* Event Definitions */
+
+/* Example event definition */
+// const sampleEvent = (action, prevState, nextState) => {
+//   return {
+//     event: /* fill me in */,
+//     /* add any additional key/value pairs below */,
+//   };
+// };
+
+const pageView = (action) => {
+  return {
+    event: 'starward.pageview',
+    page: action.payload.pathname
+  };
 };
 
-/**
- * fires a datalayer push to GTM to allow custom SPA based page navigations
- * inside of analytics
- */
-const trackPageChange = () => {
-  const { dataLayer } = window;
-  if (!dataLayer) {
-    logger('gtm couldn\'t track page change, cannot find gtm datalayer');
-  } else {
-    const event = {
-      event: 'starward.pageview',
-    };
-    logger('pushing event to gtm datalayer: ', event);
-    dataLayer.push(event);
-  }
+const formSubmitSuccess = (action) => {
+  return {
+    event: 'starward.formsubmit',
+    formId: action.key,
+    formTitle: action.formTitle
+  };
 };
 
-/**
- * middleware that lets us track certain events which add a gtm string
- * i.e. On page change, we should fire an event to GTM letting it know the page
- * has changed
- */
-export const gtmMiddleware = store => next => (action) => {
-  const { gtm } = action;
-
-  // before running next, this will be the state BEFORE the action fired
-  switch (gtm) {
-    default:
-      break;
-  }
-
-  // run the next call
-  const result = next(action);
-
-  // run after next
-  switch (gtm) {
-    case GTM_TRACK_PAGE_CHANGE: {
-      trackPageChange();
-      break;
-    }
-    default:
-      break;
-  }
-
-  // return the result of firing the resolvers, this will be the state AFTER the action fired
-  return result;
+/* Create Events Map */
+const eventsMap = {
+  [LOCATION_CHANGE]: pageView,
+  [SUBMIT_FORM_SUCCESS]: formSubmitSuccess
 };
+
+/* Set target */
+const target = GoogleTagManager();
+
+/* Create Middleware */
+export const gtmMiddleware = createMiddleware(eventsMap, target);

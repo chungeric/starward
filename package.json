@@ -58,6 +58,7 @@
     "node": "4.x || 5.x || 6.x || 7.x || 8.x || 9.x"
   },
   "dependencies": {
+    "@redux-beacon/google-tag-manager": "^1.0.1",
     "axios": "^0.16.2",
     "body-parser": "^1.17.2",
     "compression": "^1.7.0",
@@ -81,6 +82,7 @@
     "react-router-redux": "^5.0.0-alpha.6",
     "redis": "^2.7.1",
     "redux": "^3.7.2",
+    "redux-beacon": "^2.0.3",
     "redux-thunk": "^2.0.1",
     "serialize-javascript": "^1.5.0",
     "webpack": "^4.1.0",
